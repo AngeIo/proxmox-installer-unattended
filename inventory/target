@@ -1,0 +1,3 @@
+# Put the hostname or IP address of the host you want Proxmox installed on
+[target]
+myserver
