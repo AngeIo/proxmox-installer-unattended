@@ -1,0 +1,9 @@
+---
+# This playbook is used to install OpenStack Bifrost (standalone version of Ironic) and create the required files to proceed with the deployment of Proxmox
+
+- name: Installation of Bifrost and creation of required files
+  become: yes
+  hosts: localhost
+  connection: local
+  roles:
+    - bifrost-postinstall

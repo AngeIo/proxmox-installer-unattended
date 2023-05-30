@@ -1,8 +1,11 @@
-# Proxmox VE installer on Debian - Ansible Playbook
+# Proxmox VE installer on Debian - Unattended
 
-Install Proxmox VE 7.4 on top of Debian 11 Bullseye to host your VMs effortlessly.
+> Installs OpenStack Bifrost (standalone version of Ironic module for OpenStack) on Debian, deploys a new Debian on Baremetal (your server) and installs Proxmox VE on it to host your VMs effortlessly.
+> With this project, everything is covered, from system deployment to Proxmox installation, by the end of scripts executions, your server is ready to use! You'll just have to type the IP address of your freshly installed Proxmox and there you go!
 
-Based on the official documentation at : https://pve.proxmox.com/wiki/Install_Proxmox_VE_on_Debian_11_Bullseye
+Based on the official documentations at :
+- https://docs.openstack.org/bifrost/2023.1/
+- https://pve.proxmox.com/wiki/Install_Proxmox_VE_on_Debian_11_Bullseye
 
 ## Why?
 
@@ -16,19 +19,20 @@ So I created this simple Ansible Playbook to easily _convert_ my servers without
 - [x] Add a bridge interface to connect to the physical network and mimic VMnet1 on VMware
 - [x] Add a NAT interface to mimic VMnet8 on VMware (172.16.0.0/12)
 - [x] Set a static IP to main network interface based on DHCP lease
-- [x] Idempotent (you can run it multiple times without breaking anything)
-- [x] (hopefully) Optimized Ansible Playbook to install everything with as few tasks as possible
+- [x] Ansible playbooks are idempotent but not `run.sh`
 - [x] Easy to use with a single command: `just`
 
 ### Limitations
 
 - [x] No DHCP on the NAT network, so you'll have to set a static IP on each of your VM (or deploy your own DHCP server), when I have more time, I plan to add it to the playbook by using `dnsmasq`
+- [x] For now, it doesn't install OpenStack Bifrost, I'll add it soon
 
 ## Pre-requisites
 
+- Create your own `variables.sh` file by copying the template `variables.sh.example` and follow the instructions
+- One server ready for Proxmox deployment (disks will be wiped, be sure to backup your data!) (tested on a DELL PowerEdge R410)
 - Your SSH public key copied to the server(s) to be able to connect to it without password and allow Ansible playbook to run, example: `ssh-copy-id -i $HOME/.ssh/id_rsa.pub user@myserver`
 - Python library `netaddr` (to install it, run `pip install netaddr`)
-- Server(s) with Debian 11 installed
 - Client machine to execute the playbook from and apply on the server(s)
 - Python 3 (tested with 3.9.2)
 - pip (tested with 20.3.4)

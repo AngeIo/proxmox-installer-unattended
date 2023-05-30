@@ -1,0 +1,41 @@
+---
+# This role installs OpenStack Bifrost (standalone version of Ironic) and create the required files to proceed with the deployment of Proxmox
+
+- name: Install required packages
+  apt:
+    name:
+      - python3
+      - git
+    state: present
+
+- name: Set variable to wait for node to finish deploying before continuing in baremetal file
+  replace:
+    path: "{{ lookup('ansible.builtin.env', 'SH_PROX_BIFROST_PATH') }}/playbooks/inventory/group_vars/baremetal"
+    regexp: '^wait_for_node_deploy: false$'
+    replace: 'wait_for_node_deploy: true'
+
+- name: Replace network interface in baremetal file
+  replace:
+    path: "{{ lookup('ansible.builtin.env', 'SH_PROX_BIFROST_PATH') }}/playbooks/inventory/group_vars/baremetal"
+    regexp: '^# network_interface: "virbr0"$'
+    replace: "network_interface: \"{{ lookup('ansible.builtin.env', 'SH_PROX_BIFROST_INTERFACE') }}\""
+
+- name: Replace network interface in localhost file
+  replace:
+    path: "{{ lookup('ansible.builtin.env', 'SH_PROX_BIFROST_PATH') }}/playbooks/inventory/group_vars/localhost"
+    regexp: '^# network_interface: "virbr0"$'
+    replace: "network_interface: \"{{ lookup('ansible.builtin.env', 'SH_PROX_BIFROST_INTERFACE') }}\""
+
+- name: Replace network interface in target file
+  replace:
+    path: "{{ lookup('ansible.builtin.env', 'SH_PROX_BIFROST_PATH') }}/playbooks/inventory/group_vars/target"
+    regexp: '^# network_interface: "virbr0"$'
+    replace: "network_interface: \"{{ lookup('ansible.builtin.env', 'SH_PROX_BIFROST_INTERFACE') }}\""
+
+# - name: Install Ansible using Bifrost provided scripts
+#   script:
+#     src: "{{ lookup('ansible.builtin.env', 'SH_PROX_BIFROST_PATH') }}/scripts/env-setup.sh"
+
+- name: Install package to fix error
+  become: yes
+  command: pip install setuptools==59.5.0

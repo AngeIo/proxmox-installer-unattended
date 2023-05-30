@@ -26,7 +26,6 @@ iface {{ interface }} inet manual
 {% endif %}
 {% endfor %}
 
-# Home Network/Private Network
 auto vmbr0
 iface vmbr0 inet static
     address {{ ansible_default_ipv4.address|default(ansible_all_ipv4_addresses[0]) }}/{{ (ansible_default_ipv4.address + '/' + ansible_default_ipv4.netmask) | ansible.utils.ipaddr('prefix') }}
@@ -34,8 +33,9 @@ iface vmbr0 inet static
     bridge-ports {{ ansible_default_ipv4.interface }}
     bridge-stp off
     bridge-fd 0
+    dns-nameservers {{ lookup('ansible.builtin.env', 'SH_PROX_DNSONE') }} {{ lookup('ansible.builtin.env', 'SH_PROX_DNSTWO') }}
+#Default Network / Home Network
 
-# NAT
 auto vmbr1
 iface vmbr1 inet static
     address 172.16.0.1/12
@@ -45,3 +45,4 @@ iface vmbr1 inet static
     post-up echo 1 > /proc/sys/net/ipv4/ip_forward
     post-up   iptables -t nat -A POSTROUTING -s '172.16.0.0/12' -o vmbr0 -j MASQUERADE
     post-down iptables -t nat -D POSTROUTING -s '172.16.0.0/12' -o vmbr0 -j MASQUERADE
+#NAT / Isolated Network

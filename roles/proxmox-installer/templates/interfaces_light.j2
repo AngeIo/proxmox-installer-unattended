@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# Home Network/Private Network
+auto {{ hostvars[inventory_hostname]['ansible_interfaces'][0] }}
+iface {{ hostvars[inventory_hostname]['ansible_interfaces'][0] }} inet static
+    address {{ ansible_default_ipv4.address|default(ansible_all_ipv4_addresses[0]) }}/{{ (ansible_default_ipv4.address + '/' + ansible_default_ipv4.netmask) | ansible.utils.ipaddr('prefix') }}
+    gateway {{ ansible_default_ipv4.gateway|default(ansible_all_ipv4_addresses[0]) }}
+    dns-nameservers {{ lookup('ansible.builtin.env', 'SH_PROX_DNSONE') }} {{ lookup('ansible.builtin.env', 'SH_PROX_DNSTWO') }}

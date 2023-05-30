@@ -1,0 +1,76 @@
+{
+  "r410": {
+    "uuid": "{{ lookup('ansible.builtin.env', 'SH_PROX_BAREMETALUUID') }}",
+    "name": "{{ lookup('ansible.builtin.env', 'SH_PROX_HOSTNAME') }}",
+    "driver": "ipmi",
+    "driver_info": {
+      "ipmi_address": "{{ lookup('ansible.builtin.env', 'SH_PROX_IPMIIPADDRESS') }}",
+      "ipmi_username": "{{ lookup('ansible.builtin.env', 'SH_PROX_IPMIUSER') }}",
+      "ipmi_password": "{{ lookup('ansible.builtin.env', 'SH_PROX_IPMIPASS') }}"
+    },
+    "ipv4_address": "{{ lookup('ansible.builtin.env', 'SH_PROX_PROXIPADDRESS') }}",
+    "ipv4_subnet_mask": "{{ lookup('ansible.builtin.env', 'SH_PROX_NETMASK_LONG') }}",
+    "ipv4_gateway": "{{ lookup('ansible.builtin.env', 'SH_PROX_GATEWAY') }}",
+    "ipv4_nameserver": ["{{ lookup('ansible.builtin.env', 'SH_PROX_DNSONE') }}", "{{ lookup('ansible.builtin.env', 'SH_PROX_DNSTWO') }}"],
+    "nics": [
+      {
+        "mac": "{{ lookup('ansible.builtin.env', 'SH_PROX_MACADDRESS') }}"
+      }
+    ],
+    "properties": {
+      "root_device": {"serial": "{{ lookup('ansible.builtin.env', 'SH_PROX_ROOTDEVSERIAL') }}"}
+    },
+    "instance_info": {
+      "image_source": "http://{{ lookup('ansible.builtin.env', 'SH_PROX_BIFROSTRUNNERIPADDRESS') }}:8080/debian-11-generic-amd64_mod.qcow2",
+      "image_checksum": "aa70286e5fcb614bb85ff7dcd8ef36e6",
+      "configdrive": {
+        "meta_data": {
+          "public_keys": {"0": "{{ lookup('ansible.builtin.env', 'SH_PROX_SSHKEY_CONTENT') }}"},
+          "hostname": "{{ lookup('ansible.builtin.env', 'SH_PROX_FQDN') }}"
+        },
+        "user_data": "#cloud-config\nmanage_etc_hosts: false\npackage_reboot_if_required: true\npackage_update: true\npackage_upgrade: true\npackages:\n  - git\n  - neofetch\nusers:\n  - default\n  - name: root\n    lock_passwd: false\n    hashed_passwd: '$6$rounds=4096$1FvzX3SRQRhcNnPc$GCV17Uf3qJAjGw6Ea30fjVcVx9p1.O7erSAUFGt4bGkrlmfjZ.ADrIveaFLisCG.61wPBlahouxADEweMelyl.'",
+        "network_data": {
+          "links": [
+            {
+                "id": "eno1",
+                "type": "phy",
+                "ethernet_mac_address": "{{ lookup('ansible.builtin.env', 'SH_PROX_MACADDRESS') }}",
+                "mtu": {{ lookup('ansible.builtin.env', 'SH_PROX_MTU') }}
+            }
+          ],
+          "networks": [
+            {
+                "id": "private-ipv4",
+                "type": "ipv4",
+                "link": "eno1",
+                "ip_address": "{{ lookup('ansible.builtin.env', 'SH_PROX_PROXIPADDRESS') }}",
+                "netmask": "{{ lookup('ansible.builtin.env', 'SH_PROX_NETMASK_LONG') }}",
+                "dns_nameservers": [
+                    "{{ lookup('ansible.builtin.env', 'SH_PROX_DNSONE') }}",
+                    "{{ lookup('ansible.builtin.env', 'SH_PROX_DNSTWO') }}"
+                ],
+                "routes": [
+                    {
+                        "network": "0.0.0.0",
+                        "netmask": "0.0.0.0",
+                        "gateway": "{{ lookup('ansible.builtin.env', 'SH_PROX_GATEWAY') }}"
+                    }
+                ],
+                "network_id": "62611d6f-66cb-4270-8b1f-503ef0dd4736"
+            }
+          ],
+          "services": [
+            {
+                "type": "dns",
+                "address": "{{ lookup('ansible.builtin.env', 'SH_PROX_DNSONE') }}"
+            },
+            {
+                "type": "dns",
+                "address": "{{ lookup('ansible.builtin.env', 'SH_PROX_DNSTWO') }}"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

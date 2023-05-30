@@ -1,0 +1,83 @@
+---
+# This role installs OpenStack Bifrost (standalone version of Ironic) and create the required files to proceed with the deployment of Proxmox
+
+- name: Download Ubuntu (20.04.6) Ironic Python Agent (IPA) image using ironic-python-agent-builder
+  shell:
+    cmd: |
+      . /opt/stack/bifrost/bin/activate
+      /opt/stack/bifrost/bin/ironic-python-agent-builder -r focal -o /tmp/ipa ubuntu
+  args:
+    creates: /tmp/ipa
+
+- name: Create a folder to store old IPA images
+  file:
+    path: "/var/lib/ironic/httpboot/old_ipa"
+    state: directory
+
+- name: Move default IPA image in a separate directory
+  shell:
+    cmd: |
+      mv /var/lib/ironic/httpboot/ipa* /var/lib/ironic/httpboot/old_ipa/
+
+- name: Move new IPA image to Bifrost directory
+  shell:
+    cmd: |
+      mv /tmp/ipa* /var/lib/ironic/httpboot/
+
+- name: Create SHA256 checksum of IPA initramfs
+  shell:
+    cmd: |
+      sha256sum /var/lib/ironic/httpboot/ipa.initramfs > /var/lib/ironic/httpboot/ipa.initramfs.sha256
+
+- name: Create SHA256 checksum of IPA kernel
+  shell:
+    cmd: |
+      sha256sum /var/lib/ironic/httpboot/ipa.kernel > /var/lib/ironic/httpboot/ipa.kernel.sha256
+
+- name: Download Debian 11 Bullseye Cloud image
+  get_url:
+    url: http://cdimage.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.qcow2
+    dest: /var/lib/ironic/httpboot/debian-11-generic-amd64.qcow2
+
+- name: Change owner and permissions of IPA files
+  shell:
+    cmd: |
+      chown -R ironic: /var/lib/ironic/httpboot/*
+      chmod -R 755 /var/lib/ironic/httpboot/*
+
+- name: Rename cloud image for modified version
+  shell:
+    cmd: |
+      mv /var/lib/ironic/httpboot/debian-11-generic-amd64.qcow2 /var/lib/ironic/httpboot/debian-11-generic-amd64_mod.qcow2
+
+- name: Install virt-customize
+  apt:
+    name: libguestfs-tools
+    state: present
+    update_cache: yes
+
+- name: Customize the Debian Cloud image using virt-customize to install firmware for network card
+  command: |
+    virt-customize -v -a debian-11-generic-amd64_mod.qcow2 --run-command "sudo apt update && sudo apt upgrade -y && sudo apt install software-properties-common -y && sudo apt-add-repository non-free && sudo apt-get update && sudo apt install firmware-bnx2 -y"
+  args:
+    chdir: /var/lib/ironic/httpboot/
+
+- name: Create MD5 checksum of Debian Cloud image
+  shell:
+    cmd: |
+      md5sum /var/lib/ironic/httpboot/debian-11-generic-amd64_mod.qcow2 > /var/lib/ironic/httpboot/debian-11-generic-amd64_mod.qcow2.md5
+
+- name: Restart ironic service
+  systemd:
+    name: ironic.service
+    state: restarted
+
+- name: Restart ironic-inspector service
+  systemd:
+    name: ironic-inspector.service
+    state: restarted
+
+- name: Create baremetal.json file from template
+  template:
+    src: baremetal_json.j2
+    dest: "{{ lookup('ansible.builtin.env', 'BIFROST_INVENTORY_SOURCE') }}"

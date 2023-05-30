@@ -1,0 +1,83 @@
+#!/bin/bash
+# Change these variables to match your environment
+
+# If you want to enable DEBUG mode, set verbosity mode to something between 1 and 4, otherwise 0 to disable, example: 4
+export ANSIBLE_VERBOSITY=
+
+# Where is located your Bifrost repository, example: /home/user/bifrost
+export SH_PROX_BIFROST_PATH=
+
+# Where is located the Bifrost inventory file to be generated, example: $SH_PROX_BIFROST_PATH/playbooks/inventory/baremetal.json
+export BIFROST_INVENTORY_SOURCE=
+
+# Where is located this project (proxmox-installer-unattended), example: /home/agerard/gitrepo/proxmox-installer-unattended
+export SH_PROX_PROXMOXINSTALL_PATH=
+
+# What UUID you want to give to your server (the default one should be fine if you only have one server), example: 00000000-0000-0000-0000-000000000001
+export SH_PROX_BAREMETALUUID=00000000-0000-0000-0000-000000000001
+
+# The hostname to give to your server, example: r410
+export SH_PROX_HOSTNAME=
+
+# The FQDN of your server, example: $SH_PROX_HOSTNAME.lan.pi
+export SH_PROX_FQDN=
+
+# The network interface name on which you want Bifrost to initialize baremetal machines (using DHCP, PXE...), example: enp0s31f6
+export SH_PROX_BIFROST_INTERFACE=
+
+# The MAC address of the network interface on which your should PXE boot, example: 78:2b:cb:4d:15:27
+export SH_PROX_MACADDRESS=
+
+# The MTU (maximum transmission unit) of the network you are currently on, example: 1500
+export SH_PROX_MTU=
+
+# The IP address of the client who runs this script / Bifrost, example: 10.5.0.16
+export SH_PROX_BIFROSTRUNNERIPADDRESS=
+
+# The SSH public key of the client who runs this script / Bifrost, example: ssh-rsa AAAAB3NzaC1yc2EAAAA...oI2YTF4zU= agerard@lab-deb-minipc
+export SH_PROX_SSHKEY_CONTENT=
+
+# The IP address of the IPMI interface on your server, example: 10.5.0.9
+export SH_PROX_IPMIIPADDRESS=
+
+# The username used to connect in IPMI to your server, example: agerard
+export SH_PROX_IPMIUSER=
+
+# The password used to connect in IPMI to your server, example: VerySecurePassword
+export SH_PROX_IPMIPASS=
+
+# The SERIAL number of the disk you want to install your OS on, example: 800204e0000000009d80b87dbbc7c304
+export SH_PROX_ROOTDEVSERIAL=
+
+# At what IP address the DHCP pool for Bifrost should start, example: 10.5.0.20
+export SH_PROX_PROX_DHCPSTART=
+
+# At what IP address the DHCP pool for Bifrost should end, example: 10.5.0.100
+export SH_PROX_PROX_DHCPEND=
+
+# The IP address you want to give to your server on the new OS, example: 10.5.0.10
+export SH_PROX_PROXIPADDRESS=
+
+# The associated network mask (long form) of this IP to give to the new OS, example: 255.255.0.0
+export SH_PROX_NETMASK_LONG=
+
+# The associated network mask (short/CIDR form) of this IP to give to the new OS, example: 255.255.0.0
+export SH_PROX_NETMASK_SHORT=
+
+# The associated network gateway of this IP to give to the new OS, example: 10.5.0.1
+export SH_PROX_GATEWAY=
+
+# The first DNS server to give to the new OS, example: 192.168.1.3
+export SH_PROX_DNSONE=
+
+# The second/backup DNS server to give to the new OS, example: 1.1.1.1
+export SH_PROX_DNSTWO=
+
+# Where is located the ".ssh" directory, example: $HOME/.ssh
+export SH_PROX_SSH_PATH=$HOME/.ssh
+
+# What is the name of your SSH public key, example: id_rsa.pub
+export SH_PROX_SSHKEY_NAME=id_rsa.pub
+
+# Where is located your SSH public key, example: $SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME
+export SH_PROX_SSHKEY_PATH=$SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME
