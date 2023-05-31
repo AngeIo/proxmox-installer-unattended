@@ -163,7 +163,7 @@ case $choice in
     source /opt/stack/bifrost/bin/activate
     . ~/openrc
     # Start the deployment of Debian
-    ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/bifrost_inventory.py -e @$SH_PROX_BIFROST_PATH/baremetal-install-env.json --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_BIFROST_PATH/playbooks/deploy-dynamic.yaml
+    ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/bifrost_inventory.py -e @$SH_PROX_PROXMOXINSTALL_PATH/baremetal-install-env.json --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_BIFROST_PATH/playbooks/deploy-dynamic.yaml
     # Wait for the server to ping before continue
     count_one=0
     echo "Waiting for server to be up again (~10 min timeout)..."
