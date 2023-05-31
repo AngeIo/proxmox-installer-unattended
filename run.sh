@@ -6,6 +6,7 @@
 
 # If any instruction returns non-zero exit code, exit the script
 #set -e
+set -x
 
 # Define a function to execute when the SIGINT signal is received
 function cleanup {
@@ -104,8 +105,9 @@ if [[ $choice -eq 1 || $choice -eq 2 ]]; then
     clear
 fi
 # Install pre-requisite
-echo unattended_ez | sudo -S apt update
-echo unattended_ez | sudo -S apt install git
+echo $unattended_ez | sudo -S apt update
+echo $unattended_ez | sudo -S apt install python3 git
+clear
 echo "You can now sit back, relax, and wait approximately 40 minutes (if you chose 'Everything') for the script to finish the installation!"
 echo "Starting in 5 seconds..."
 read -t 5 -p "Hit ENTER to skip"
@@ -120,11 +122,21 @@ case $choice in
     # Get the bifrost repo from OpenStack
     mkdir -p $SH_PROX_BIFROST_PATH
     git clone https://opendev.org/openstack/bifrost.git $SH_PROX_BIFROST_PATH 2>/dev/null
-    # Run the first playbook to install OpenStack Bifrost on top of localhost's Debian & create the "baremetal.json" file
+    # Run this first part of the script to install OpenStack Bifrost on top of localhost's Debian & create the "baremetal.json" file
+    # Bifrost initialisation
+    # Set variable to wait for node to finish deploying before continuing in baremetal file
+    echo $unattended_ez | sudo -S sed -i 's/^wait_for_node_deploy: false$/wait_for_node_deploy: true/' $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/baremetal
+    # Replace network interface in baremetal file
+    echo $unattended_ez | sudo -S sed -i "s/^# network_interface: \"virbr0\"$/network_interface: \"$SH_PROX_BIFROST_INTERFACE\"/" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/baremetal
+    # Replace network interface in localhost file
+    echo $unattended_ez | sudo -S sed -i "s/^# network_interface: \"virbr0\"$/network_interface: \"$SH_PROX_BIFROST_INTERFACE\"/" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/localhost
+    # Replace network interface in target file
+    echo $unattended_ez | sudo -S sed -i "s/^# network_interface: \"virbr0\"$/network_interface: \"$SH_PROX_BIFROST_INTERFACE\"/" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target
+    echo $unattended_ez | sudo -S pip install setuptools==59.5.0
     # Install Ansible using Bifrost provided scripts
-    bash ./scripts/env-setup.sh
-    # Bifrost initialisation playbook
-    ansible-playbook -D -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_PROXMOXINSTALL_PATH/pb_bifrost_init.yml
+    cd $SH_PROX_BIFROST_PATH
+    echo $unattended_ez | sudo -S bash ./scripts/env-setup.sh
+    cd -
     source /opt/stack/bifrost/bin/activate
     # Bifrost provided install playbook
     ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_BIFROST_PATH/playbooks/install.yaml
