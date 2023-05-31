@@ -86,6 +86,8 @@ myChoice() {
     echo $choicenumber
 }
 
+function lineinfile() { line=${2//\//\\/} ; sed -i -e '/'"${1//\//\\/}"'/{s/.*/'"${line}"'/;:a;n;ba;q};$a'"${line}" "$3" ; }
+
 ### RUNNING ###
 
 # Go to script's directory and load the variables from this file
@@ -133,6 +135,13 @@ case $choice in
     # Replace network interface in target file
     echo $unattended_ez | sudo -S sed -i "s/^# network_interface: \"virbr0\"$/network_interface: \"$SH_PROX_BIFROST_INTERFACE\"/" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target
     echo $unattended_ez | sudo -S pip install setuptools==59.5.0
+    # Add DHCP instructions
+    lineinfile "dhcp_provider:" 'dhcp_provider: "dnsmasq"' $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/localhost
+    lineinfile "dhcp_pool_start:" "dhcp_pool_start: $SH_PROX_PROX_DHCPSTART" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/localhost
+    lineinfile 'dhcp_pool_end:' "dhcp_pool_end: $SH_PROX_PROX_DHCPEND" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/localhost
+    lineinfile "dhcp_provider:" 'dhcp_provider: "dnsmasq"' $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target
+    lineinfile "dhcp_pool_start:" "dhcp_pool_start: $SH_PROX_PROX_DHCPSTART" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target
+    lineinfile 'dhcp_pool_end:' "dhcp_pool_end: $SH_PROX_PROX_DHCPEND" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target
     # Install Ansible using Bifrost provided scripts
     cd $SH_PROX_BIFROST_PATH
     echo $unattended_ez | sudo -S bash ./scripts/env-setup.sh
@@ -178,7 +187,9 @@ case $choice in
     source /opt/stack/bifrost/bin/activate
     . ~/openrc
     # Start the deployment of Debian
-    ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/bifrost_inventory.py -e @$SH_PROX_PROXMOXINSTALL_PATH/baremetal-install-env.json --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_BIFROST_PATH/playbooks/deploy-dynamic.yaml
+    cd $SH_PROX_BIFROST_PATH/playbooks
+    ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/bifrost_inventory.py --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_BIFROST_PATH/playbooks/deploy-dynamic.yaml
+    cd -
     # Wait for the server to ping before continue
     count_one=0
     echo "Waiting for server to be up again (~10 min timeout)..."
