@@ -76,11 +76,11 @@ export SH_PROX_DNSTWO=
 # Where is located the ".ssh" directory, example: $HOME/.ssh
 export SH_PROX_SSH_PATH=$HOME/.ssh
 
-# What is the name of your SSH public key, example: id_rsa.pub
+# What is the name of your SSH public key, example: id_rsa
 export SH_PROX_SSHKEY_NAME=id_rsa
 
-# Where is located your SSH public key, example: $SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME
+# Where is located your SSH private key, example: $SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME
 export SH_PROX_SSHKEY_PATH=$SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME
 
-# Where is located your SSH public key, example: $SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME
+# Where is located your SSH public key, example: $SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME.pub
 export SH_PROX_SSHKEYPUB_PATH=$SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME.pub
