@@ -6,7 +6,7 @@
 
 # If any instruction returns non-zero exit code, exit the script
 #set -e
-set -x
+#set -x
 
 # Define a function to execute when the SIGINT signal is received
 function cleanup {
