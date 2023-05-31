@@ -5,7 +5,7 @@
 ### INIT & CHECK ###
 
 # If any instruction returns non-zero exit code, exit the script
-set -e
+#set -e
 
 # Define a function to execute when the SIGINT signal is received
 function cleanup {
