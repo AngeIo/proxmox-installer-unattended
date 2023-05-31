@@ -103,6 +103,9 @@ if [[ $choice -eq 1 || $choice -eq 2 ]]; then
     fi
     clear
 fi
+# Install pre-requisite
+echo unattended_ez | sudo -S apt update
+echo unattended_ez | sudo -S apt install git
 echo "You can now sit back, relax, and wait approximately 40 minutes (if you chose 'Everything') for the script to finish the installation!"
 echo "Starting in 5 seconds..."
 read -t 5 -p "Hit ENTER to skip"
@@ -118,10 +121,10 @@ case $choice in
     mkdir -p $SH_PROX_BIFROST_PATH
     git clone https://opendev.org/openstack/bifrost.git $SH_PROX_BIFROST_PATH 2>/dev/null
     # Run the first playbook to install OpenStack Bifrost on top of localhost's Debian & create the "baremetal.json" file
-    # Bifrost initialisation playbook
-    ansible-playbook -D -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_PROXMOXINSTALL_PATH/pb_bifrost_init.yml
     # Install Ansible using Bifrost provided scripts
     bash ./scripts/env-setup.sh
+    # Bifrost initialisation playbook
+    ansible-playbook -D -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_PROXMOXINSTALL_PATH/pb_bifrost_init.yml
     source /opt/stack/bifrost/bin/activate
     # Bifrost provided install playbook
     ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_BIFROST_PATH/playbooks/install.yaml
