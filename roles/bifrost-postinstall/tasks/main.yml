@@ -1,6 +1,11 @@
 ---
 # This role installs OpenStack Bifrost (standalone version of Ironic) and create the required files to proceed with the deployment of Proxmox
 
+- name: Install package to fix another error
+  ansible.builtin.pip:
+    name: openstacksdk==0.62.0
+    virtualenv: /opt/stack/bifrost
+
 - name: Download Ubuntu (20.04.6) Ironic Python Agent (IPA) image using ironic-python-agent-builder
   shell:
     cmd: |

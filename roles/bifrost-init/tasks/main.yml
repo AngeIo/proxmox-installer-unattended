@@ -39,3 +39,15 @@
 - name: Install package to fix error
   become: yes
   command: pip install setuptools==59.5.0
+
+# - name: Install package to fix error
+#   ansible.builtin.pip:
+#     name: setuptools==59.5.0
+#     virtualenv: /opt/stack/bifrost
+
+# - name: Install package to fix another error
+#   become: yes
+#   shell:
+#     cmd: |
+#       . /opt/stack/bifrost/bin/activate
+#       pip install --force-reinstall openstacksdk==0.62.0
