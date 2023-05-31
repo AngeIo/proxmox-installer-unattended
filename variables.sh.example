@@ -10,7 +10,7 @@ export SH_PROX_BIFROST_PATH=
 # Where is located the Bifrost inventory file to be generated, example: $SH_PROX_BIFROST_PATH/playbooks/inventory/baremetal.json
 export BIFROST_INVENTORY_SOURCE=
 
-# Where is located this project (proxmox-installer-unattended), example: /home/agerard/gitrepo/proxmox-installer-unattended
+# Where is located this project (proxmox-installer-unattended), example: /home/user/gitrepo/proxmox-installer-unattended
 export SH_PROX_PROXMOXINSTALL_PATH=
 
 # What UUID you want to give to your server (the default one should be fine if you only have one server), example: 00000000-0000-0000-0000-000000000001
@@ -34,13 +34,13 @@ export SH_PROX_MTU=
 # The IP address of the client who runs this script / Bifrost, example: 10.5.0.16
 export SH_PROX_BIFROSTRUNNERIPADDRESS=
 
-# The SSH public key of the client who runs this script / Bifrost, example: ssh-rsa AAAAB3NzaC1yc2EAAAA...oI2YTF4zU= agerard@lab-deb-minipc
+# The SSH public key of the client who runs this script / Bifrost, example: ssh-rsa AAAAB3NzaC1yc2EAAAA...oI2YTF4zU= user@lab-deb-minipc
 export SH_PROX_SSHKEY_CONTENT=
 
 # The IP address of the IPMI interface on your server, example: 10.5.0.9
 export SH_PROX_IPMIIPADDRESS=
 
-# The username used to connect in IPMI to your server, example: agerard
+# The username used to connect in IPMI to your server, example: user
 export SH_PROX_IPMIUSER=
 
 # The password used to connect in IPMI to your server, example: VerySecurePassword
@@ -61,7 +61,7 @@ export SH_PROX_PROXIPADDRESS=
 # The associated network mask (long form) of this IP to give to the new OS, example: 255.255.0.0
 export SH_PROX_NETMASK_LONG=
 
-# The associated network mask (short/CIDR form) of this IP to give to the new OS, example: 255.255.0.0
+# The associated network mask (short/CIDR form) of this IP to give to the new OS, example: 16
 export SH_PROX_NETMASK_SHORT=
 
 # The associated network gateway of this IP to give to the new OS, example: 10.5.0.1
