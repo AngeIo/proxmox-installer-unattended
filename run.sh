@@ -1,9 +1,5 @@
 #!/bin/bash
-
-### CHECKER LES TODOS / TODO:
-
 # This script will run all the commands to enroll a physical machine (baremetal), deploy an OS on it (Debian 11), and install Proxmox VE
-
 # The script should also be run by the same user who installed Bifrost
 
 ### INIT & CHECK ###
@@ -14,37 +10,33 @@ function cleanup {
     echo "Exiting..."
     exit 1
 }
-
 # Set up the trap to catch the SIGINT signal and execute the cleanup function
 trap cleanup SIGINT
-
 # Check that command nc is installed
 command -v nc
 if [ $? -eq 1 ]; then
     echo "Exiting due to 'nc' command not installed (install with 'apt install netcat')"
     exit 1
 fi
-
 # Your script commands go here
 echo "Running script..."
 echo ""
 echo "/!\ You could see errors, it's normal, for example if node does not already exists or if symbolic link couldn't create because file exists, etc. /!\\"
 echo ""
 
-
 ### FUNCTION ###
 
-# Fonction myChoice :
-#     Cette fonction sert à générer un prompt pour répondre à une question, les réponses possibles sont 1 2 3 4 etc.
-#     Utilisation de la fonction :
-#     myChoice("QUESTION", "RÉPONSE 1", "RÉPONSE 2", "RÉPONSE 3", "RÉPONSE 4", "etc.")
-#     et Affiche la sortie suivante :
-#     QUESTION :
-#     [1] RÉPONSE 1
-#     [2] RÉPONSE 2
-#     [3] RÉPONSE 3
-#     [4] RÉPONSE 4
-#     Entrez un numéro correspondant à la liste ci-dessus: [NUMÉRO LISTE]
+# Function myChoice:
+#     This function generates a prompt to answer a question, with possible answers 1 2 3 4 etc.
+#     Usage of the function:
+#     myChoice("QUESTION", "ANSWER 1", "ANSWER 2", "ANSWER 3", "ANSWER 4", "etc.")
+#     and displays the following output:
+#     QUESTION:
+#     [1] ANSWER 1
+#     [2] ANSWER 2
+#     [3] ANSWER 3
+#     [4] ANSWER 4
+#     Enter a number corresponding to the list above: [LIST NUMBER]
 myChoice() {
     startLst=1
     endLst=$(($# - 1))
@@ -90,25 +82,14 @@ myChoice() {
     echo $choicenumber
 }
 
-
 ### RUNNING ###
 
 # Go to script's directory and load the variables from this file
 cd "${0%/*}" && source variables.sh && cd -
-
-#TODO:
-# Load the venv and custom environment variables
-source /opt/stack/bifrost/bin/activate
-. ~/openrc
-
 clear
-
 choice=$(myChoice "What part of this script do you want to run?" "Everything (enroll node, deploy OS, install Proxmox)" "Installation of Bifrost on localhost" "Enrollment (register node in Bifrost and start IPA)" "Deployment (deploy Debian to node)" "Installation of Proxmox on Debian")
-
 read -s -p "[sudo] password for $(whoami): " unattended_ez
-
 clear
-
 if [[ $choice -eq 1 || $choice -eq 2 ]]; then
     read -p "Is PXE the default boot device on your server? If that's the case, type yes to continue? (yes/no) " response_one
     if [ "$response_one" == "yes" ]; then
@@ -119,13 +100,10 @@ if [[ $choice -eq 1 || $choice -eq 2 ]]; then
     fi
     clear
 fi
-
 echo "You can now sit back, relax, and wait approximately 40 minutes (if you chose 'Everything') for the script to finish the installation!"
-echo "Starting in 10 seconds..."
-read -t 10 -p "Hit ENTER to skip"
-
+echo "Starting in 5 seconds..."
+read -t 5 -p "Hit ENTER to skip"
 clear
-
 case $choice in
   1) # Everything (install Bifrost, enroll node, deploy OS, install Proxmox)
     echo "Everything"
@@ -137,20 +115,14 @@ case $choice in
     mkdir -p $SH_PROX_BIFROST_PATH
     git clone https://opendev.org/openstack/bifrost.git $SH_PROX_BIFROST_PATH 2>/dev/null
     # Run the first playbook to install OpenStack Bifrost on top of localhost's Debian & create the "baremetal.json" file
-    #ansible-playbook -D -i $SH_PROX_BIFROST_PATH/playbooks/inventory/bifrost_inventory.py --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_PROXMOXINSTALL_PATH/pb_bifrost.yml
-    # BIFROST INIT PLAYBOOK
+    # Bifrost initialisation playbook
     ansible-playbook -D -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_PROXMOXINSTALL_PATH/pb_bifrost_init.yml
-    # # Fix error "AttributeError: module 'distutils' has no attribute 'version'"
-    # pip install setuptools==59.5.0
     # Install Ansible using Bifrost provided scripts
     bash ./scripts/env-setup.sh
-    #TODO: Ceci est initialisé avant, mais pas de fichier existant avant, donc conflit, corriger ça
-    # source /opt/stack/bifrost/bin/activate && cd playbooks && ansible-playbook -i inventory/target --extra-vars "ansible_become_pass=$unattended_ez" install.yaml
-    # source /opt/stack/bifrost/bin/source /opt/stack/bifrost/bin/activate
     source /opt/stack/bifrost/bin/activate
-    # BIFROST PROVIDED INSTALL PLAYBOOK
+    # Bifrost provided install playbook
     ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_BIFROST_PATH/playbooks/install.yaml
-    # BIFROST POST-INSTALL PLAYBOOK
+    # Bifrost post-install playbook POST-INSTALL PLAYBOOK
     ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_PROXMOXINSTALL_PATH/pb_bifrost_postinstall.yml
     # Check if the command executed successfully
     if [ $? -eq 0 ]; then
@@ -162,17 +134,17 @@ case $choice in
 
   3 | 1) # Enrollment (register node in Bifrost and start IPA)
     echo "Initialisation & Enrollment"
+    # Load the venv and custom environment variables
+    source /opt/stack/bifrost/bin/activate
+    . ~/openrc
     # Get the proxmox-installer-unattended repo
     mkdir -p $SH_PROX_PROXMOXINSTALL_PATH
-    git clone https://github.com/AngeIo/proxmox-installer-unattended.git $SH_PROX_PROXMOXINSTALL_PATH
+    git clone https://github.com/AngeIo/proxmox-installer-unattended.git $SH_PROX_PROXMOXINSTALL_PATH 2>/dev/null
     # Delete the existing nodes to start from a clean base
     baremetal node list
     baremetal node maintenance set $SH_PROX_HOSTNAME
     baremetal node del $SH_PROX_HOSTNAME
-    # A retirer car l'installation sera bientôt faite par le script également
-    # ln -s $SH_PROX_PROXMOXINSTALL_PATH/customized/baremetal-install-env.json $SH_PROX_BIFROST_PATH/
-    ln -s $SH_PROX_PROXMOXINSTALL_PATH/customized/baremetal.json $SH_PROX_BIFROST_PATH/playbooks/inventory/
-    # ENROLL
+    # Enroll playbook
     ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/bifrost_inventory.py --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_BIFROST_PATH/playbooks/enroll-dynamic.yaml
     # Check if the command executed successfully
     if [ $? -eq 0 ]; then
@@ -184,7 +156,10 @@ case $choice in
 
   4 | 1) # Deployment (deploy Debian to node)
     echo "Deployment"
-    # DEPLOY
+    # Load the venv and custom environment variables
+    source /opt/stack/bifrost/bin/activate
+    . ~/openrc
+    # Start the deployment of Debian
     ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/bifrost_inventory.py -e @$SH_PROX_BIFROST_PATH/baremetal-install-env.json --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_BIFROST_PATH/playbooks/deploy-dynamic.yaml
     # Wait for the server to ping before continue
     count_one=0
@@ -226,6 +201,9 @@ case $choice in
 
   5 | 1) # Proxmox installation on Debian
     echo "Proxmox"
+    # Load the venv and custom environment variables
+    source /opt/stack/bifrost/bin/activate
+    . ~/openrc
     # Run the last playbook to install Proxmox VE on top of Debian
     ansible-playbook -D -i $SH_PROX_BIFROST_PATH/playbooks/inventory/bifrost_inventory.py --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_PROXMOXINSTALL_PATH/pb_proxmox.yml
     # Check if the command executed successfully

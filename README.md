@@ -1,7 +1,7 @@
 # Proxmox VE installer on Debian - Unattended
 
-> Installs OpenStack Bifrost (standalone version of Ironic module for OpenStack) on Debian, deploys a new Debian on Baremetal (your server) and installs Proxmox VE on it to host your VMs effortlessly.
-> With this project, everything is covered, from system deployment to Proxmox installation, by the end of scripts executions, your server is ready to use! You'll just have to type the IP address of your freshly installed Proxmox and there you go!
+Installs OpenStack Bifrost (standalone version of Ironic module for OpenStack) on Debian (PC client where commands are typed), deploys a new Debian on Baremetal (your server) and installs Proxmox VE on it and is ready to use to host your VMs effortlessly.
+With this project, everything is covered, from system deployment to Proxmox installation, by the end of scripts executions, your server is ready to use! You'll just have to type the IP address of your freshly installed Proxmox and there you go!
 
 Based on the official documentations at :
 - https://docs.openstack.org/bifrost/2023.1/
@@ -16,16 +16,15 @@ So I created this simple Ansible Playbook to easily _convert_ my servers without
 ## Features
 
 - [x] Prepare the servers from scratch (upgrade, dist-upgrade, network configuration)
-- [x] Add a bridge interface to connect to the physical network and mimic VMnet1 on VMware
-- [x] Add a NAT interface to mimic VMnet8 on VMware (172.16.0.0/12)
-- [x] Set a static IP to main network interface based on DHCP lease
-- [x] Ansible playbooks are idempotent but not `run.sh`
+- [x] Add a bridge interface to connect to the physical network
+- [x] Add a NAT interface (172.16.0.0/12)
+- [x] Set a static IP to main network interface
 - [x] Easy to use with a single command: `just`
+- [x] Probably more I forgot...
 
 ### Limitations
 
 - [x] No DHCP on the NAT network, so you'll have to set a static IP on each of your VM (or deploy your own DHCP server), when I have more time, I plan to add it to the playbook by using `dnsmasq`
-- [x] For now, it doesn't install OpenStack Bifrost, I'll add it soon
 
 ## Pre-requisites
 
@@ -38,18 +37,18 @@ So I created this simple Ansible Playbook to easily _convert_ my servers without
 - pip (tested with 20.3.4)
 - Ansible (tested with 2.14.5)
 - [Just](https://github.com/casey/just) (optional)
-- Git (duh)
+- Git
 
 ### Downloading the project
 
 Clone the repository:
 
 ```shell
-git clone https://github.com/AngeIo/proxmox-installer-ansible.git
-cd proxmox-installer-ansible
+git clone https://github.com/AngeIo/proxmox-installer-unattended.git
+cd proxmox-installer-unattended
 ```
 
-To update the source code to the latest commit, run the following command inside the `proxmox-installer-ansible` directory:
+To update the source code to the latest commit, run the following command inside the `proxmox-installer-unattended` directory:
 
 ```shell
 git pull
@@ -63,14 +62,10 @@ Here are all the steps you have to follow to make this work:
 
 The first thing you have to do is editing the variables to match with your environment (comments in the files shows what to edit) :
 
-#### Changing default username to login on the server(s)
+#### Changing the variables (IP, MAC, hostname, etc..)
 ```shell
-vi ansible.cfg
-```
-
-#### Changing which server(s) to target inside the inventory
-```shell
-vi inventory/target
+cp variables.sh.example variables.sh
+vi variables.sh
 ```
 
 ### Running the Playbook
@@ -80,6 +75,7 @@ Running the playbook is very simple:
 ---
 #### With `just` installed
 ```shell
+chmod 755 ./run.sh
 just
 ```
 
@@ -87,7 +83,8 @@ just
 
 #### Without `just` installed
 ```shell
-ansible-playbook -K -D pb_main.yml
+chmod 755 ./run.sh
+./run.sh
 ```
 ---
 

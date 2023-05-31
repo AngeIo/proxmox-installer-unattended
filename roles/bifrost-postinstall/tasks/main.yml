@@ -9,15 +9,15 @@
   args:
     creates: /tmp/ipa
 
-- name: Create a folder to store old IPA images
-  file:
-    path: "/var/lib/ironic/httpboot/old_ipa"
-    state: directory
+# - name: Create a folder to store old IPA images
+#   file:
+#     path: "/var/lib/ironic/httpboot/old_ipa"
+#     state: directory
 
 - name: Move default IPA image in a separate directory
   shell:
     cmd: |
-      mv /var/lib/ironic/httpboot/ipa* /var/lib/ironic/httpboot/old_ipa/
+      rm -rf /var/lib/ironic/httpboot/ipa*
 
 - name: Move new IPA image to Bifrost directory
   shell:
