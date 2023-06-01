@@ -62,6 +62,12 @@
   args:
     chdir: /var/lib/ironic/httpboot/
 
+- name: Get SSH public key
+  shell:
+    cmd: |
+      cat {{ lookup('ansible.builtin.env', 'SH_PROX_SSHKEYPUB_PATH') }}
+  register: my_sshkey
+
 - name: Get MD5 checksum of Debian Cloud image
   shell:
     cmd: |
@@ -70,10 +76,11 @@
   args:
     chdir: /var/lib/ironic/httpboot/
 
-# - name: Copy md5 sum to a readable directory to be used later
-#   shell:
-#     cmd: |
-#       cp /var/lib/ironic/httpboot/debian-11-generic-amd64_mod.qcow2.md5 /tmp/debian-11-generic-amd64_mod.qcow2.md5
+- name: Put SSH public key in variables.sh
+  lineinfile:
+    path: "{{ lookup('ansible.builtin.env', 'SH_PROX_PROXMOXINSTALL_PATH') }}/variables.sh"
+    regexp: '^export SH_PROX_SSHKEY_CONTENT='
+    line: export SH_PROX_SSHKEY_CONTENT={{ my_sshkey.stdout }}
 
 - name: Put MD5 in variables.sh
   lineinfile:
@@ -90,8 +97,3 @@
   systemd:
     name: ironic-inspector.service
     state: restarted
-
-# - name: Create baremetal.json file from template
-#   template:
-#     src: baremetal_json.j2
-#     dest: "{{ lookup('ansible.builtin.env', 'BIFROST_INVENTORY_SOURCE') }}"

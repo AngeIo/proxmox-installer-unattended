@@ -12,6 +12,28 @@ function cleanup {
 }
 # Set up the trap to catch the SIGINT signal and execute the cleanup function
 trap cleanup SIGINT
+# Check that projects paths are set correctly
+if [ ! -d $SH_PROX_BIFROST_PATH ]; then
+    echo "bifrost directory not found, wrong path set? Current path set $SH_PROX_BIFROST_PATH"
+    exit 1
+fi
+echo "bifrost directory found! At $SH_PROX_BIFROST_PATH"
+if [ ! -d $SH_PROX_PROXMOXINSTALL_PATH ]; then
+    echo "proxmox-installer-unattended directory not found, wrong path set? Current path set $SH_PROX_PROXMOXINSTALL_PATH"
+    exit 1
+fi
+echo "proxmox-installer-unattended directory found! At $SH_PROX_PROXMOXINSTALL_PATH"
+# Check that SSH keys are generated in $SH_PROX_SSH_PATH
+if [ ! -d $SH_PROX_SSH_PATH ]; then
+    echo "SSH directory not found ($SH_PROX_SSH_PATH)"
+    exit 1
+fi
+echo "SSH directory found! ($SH_PROX_SSH_PATH)"
+if [ ! -f $SH_PROX_SSH_PATH/id_rsa.pub ] && [ ! -f $SH_PROX_SSH_PATH/id_ecdsa.pub ] && [ ! -f $SH_PROX_SSH_PATH/id_ed25519.pub ]; then
+    echo "No SSH key found ($SH_PROX_SSH_PATH/id_rsa.pub OR $SH_PROX_SSH_PATH/id_ecdsa.pub OR $SH_PROX_SSH_PATH/id_ed25519.pub)"
+    exit 1
+fi
+echo "SSH key found! ($SH_PROX_SSH_PATH/id_rsa.pub OR $SH_PROX_SSH_PATH/id_ecdsa.pub OR $SH_PROX_SSH_PATH/id_ed25519.pub)"
 # Check that command nc is installed
 command -v nc
 if [ $? -eq 1 ]; then

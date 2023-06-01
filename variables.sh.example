@@ -37,9 +37,6 @@ export SH_PROX_MTU=
 # The IP address of the client who runs this script / Bifrost, example: 10.5.0.16
 export SH_PROX_BIFROSTRUNNERIPADDRESS=
 
-# The SSH public key of the client who runs this script / Bifrost, example: ssh-rsa AAAAB3NzaC1yc2EAAAA...oI2YTF4zU= user@lab-deb-minipc
-export SH_PROX_SSHKEY_CONTENT=
-
 # The IP address of the IPMI interface on your server, example: 10.5.0.9
 export SH_PROX_IPMIIPADDRESS=
 
@@ -87,6 +84,9 @@ export SH_PROX_SSHKEY_PATH=$SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME
 
 # Where is located your SSH public key, example: $SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME.pub
 export SH_PROX_SSHKEYPUB_PATH=$SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME.pub
+
+# [ANSIBLE MANAGED / AUTOMATICALLY FILLS IN / DO NOT MODIFY] The SSH public key of the client who runs this script / Bifrost, example: ssh-rsa AAAAB3NzaC1yc2EAAAA...oI2YTF4zU= user@lab-deb-minipc
+export SH_PROX_SSHKEY_CONTENT=
 
 # [ANSIBLE MANAGED / AUTOMATICALLY FILLS IN / DO NOT MODIFY] The MD5 sum of the image to install on your server, example : 09adfa2a0ecda3570cd8d59207927913
 export SH_PROX_MD5_IMAGE=
