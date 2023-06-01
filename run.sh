@@ -12,6 +12,8 @@ function cleanup {
 }
 # Set up the trap to catch the SIGINT signal and execute the cleanup function
 trap cleanup SIGINT
+# Go to script's directory and load the variables from this file
+cd "${0%/*}" && source variables.sh && cd -
 # Check that projects paths are set correctly
 if [ ! -d $SH_PROX_BIFROST_PATH ]; then
     echo "bifrost directory not found, wrong path set? Current path set $SH_PROX_BIFROST_PATH"
@@ -109,8 +111,6 @@ function lineinfile() { line=${2//\//\\/} ; sed -i -e '/'"${1//\//\\/}"'/{s/.*/'
 
 ### RUNNING ###
 
-# Go to script's directory and load the variables from this file
-cd "${0%/*}" && source variables.sh && cd -
 clear
 choice=$(myChoice "What part of this script do you want to run?" "Everything (enroll node, deploy OS, install Proxmox)" "Installation of Bifrost on localhost" "Enrollment (register node in Bifrost and start IPA)" "Deployment (deploy Debian to node)" "Installation of Proxmox on Debian")
 read -s -p "[sudo] password for $(whoami): " unattended_ez
