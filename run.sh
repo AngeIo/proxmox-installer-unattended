@@ -150,9 +150,13 @@ case $choice in
     echo $unattended_ez | sudo -S sed -i "s/^# network_interface: \"virbr0\"$/network_interface: \"$SH_PROX_BIFROST_INTERFACE\"/" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target
     echo $unattended_ez | sudo -S pip install setuptools==59.5.0
     # Add DHCP instructions
+    lineinfile "dnsmasq_router:" "dnsmasq_router: $SH_PROX_GATEWAY" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/localhost
+    lineinfile "dnsmasq_dns_servers:" "dnsmasq_dns_servers: $SH_PROX_DNSONE,$SH_PROX_DNSTWO" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/localhost
     lineinfile "dhcp_provider:" 'dhcp_provider: "dnsmasq"' $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/localhost
     lineinfile "dhcp_pool_start:" "dhcp_pool_start: $SH_PROX_PROX_DHCPSTART" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/localhost
     lineinfile 'dhcp_pool_end:' "dhcp_pool_end: $SH_PROX_PROX_DHCPEND" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/localhost
+    lineinfile "dnsmasq_router:" "dnsmasq_router: $SH_PROX_GATEWAY" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target
+    lineinfile "dnsmasq_dns_servers:" "dnsmasq_dns_servers: $SH_PROX_DNSONE,$SH_PROX_DNSTWO" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target
     lineinfile "dhcp_provider:" 'dhcp_provider: "dnsmasq"' $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target
     lineinfile "dhcp_pool_start:" "dhcp_pool_start: $SH_PROX_PROX_DHCPSTART" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target
     lineinfile 'dhcp_pool_end:' "dhcp_pool_end: $SH_PROX_PROX_DHCPEND" $SH_PROX_BIFROST_PATH/playbooks/inventory/group_vars/target

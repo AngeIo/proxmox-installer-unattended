@@ -53,7 +53,7 @@
 
 - name: Install Proxmox VE kernel
   apt:
-    name: pve-kernel-5.15
+    name: pve-kernel-6.2
     state: present
   register: kernel_install
 

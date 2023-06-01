@@ -49,10 +49,10 @@ export SH_PROX_IPMIPASS=
 # The SERIAL number of the disk you want to install your OS on, example: 800204e0000000009d80b87dbbc7c304
 export SH_PROX_ROOTDEVSERIAL=
 
-# At what IP address the DHCP pool for Bifrost should start, example: 10.5.0.20
+# At what IP address the DHCP pool for Bifrost should start, example: 10.5.255.50
 export SH_PROX_PROX_DHCPSTART=
 
-# At what IP address the DHCP pool for Bifrost should end, example: 10.5.0.100
+# At what IP address the DHCP pool for Bifrost should end, example: 10.5.255.200
 export SH_PROX_PROX_DHCPEND=
 
 # The IP address you want to give to your server on the new OS, example: 10.5.0.10

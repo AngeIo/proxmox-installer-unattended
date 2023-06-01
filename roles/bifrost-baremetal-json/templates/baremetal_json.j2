@@ -28,7 +28,7 @@
           "public_keys": {"0": "{{ lookup('ansible.builtin.env', 'SH_PROX_SSHKEY_CONTENT') }}"},
           "hostname": "{{ lookup('ansible.builtin.env', 'SH_PROX_FQDN') }}"
         },
-        "user_data": "#cloud-config\nmanage_etc_hosts: false\npackage_reboot_if_required: true\npackage_update: true\npackage_upgrade: true\npackages:\n  - git\n  - neofetch\nusers:\n  - default\n  - name: root\n    lock_passwd: false\n    hashed_passwd: '$6$rounds=4096$1FvzX3SRQRhcNnPc$GCV17Uf3qJAjGw6Ea30fjVcVx9p1.O7erSAUFGt4bGkrlmfjZ.ADrIveaFLisCG.61wPBlahouxADEweMelyl.'",
+        "user_data": "#cloud-config\nmanage_etc_hosts: false\npackage_reboot_if_required: true\npackage_update: true\npackage_upgrade: true\nusers:\n  - default",
         "network_data": {
           "links": [
             {
