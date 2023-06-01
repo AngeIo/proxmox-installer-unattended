@@ -1,0 +1,8 @@
+---
+# This role generates the baremetal.json file required by OpenStack Bifrost (standalone version of Ironic)
+
+- name: Generation of baremetal.json file
+  hosts: localhost
+  connection: local
+  roles:
+    - bifrost-baremetal-json

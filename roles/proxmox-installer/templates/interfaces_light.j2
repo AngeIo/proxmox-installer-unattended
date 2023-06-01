@@ -7,8 +7,8 @@ auto lo
 iface lo inet loopback
 
 # Home Network/Private Network
-auto {{ hostvars[inventory_hostname]['ansible_interfaces'][0] }}
-iface {{ hostvars[inventory_hostname]['ansible_interfaces'][0] }} inet static
-    address {{ ansible_default_ipv4.address|default(ansible_all_ipv4_addresses[0]) }}/{{ (ansible_default_ipv4.address + '/' + ansible_default_ipv4.netmask) | ansible.utils.ipaddr('prefix') }}
-    gateway {{ ansible_default_ipv4.gateway|default(ansible_all_ipv4_addresses[0]) }}
+auto {{ lookup('ansible.builtin.env', 'SH_PROX_PROX_INTERFACE') }}
+iface {{ lookup('ansible.builtin.env', 'SH_PROX_PROX_INTERFACE') }} inet static
+    address {{ lookup('ansible.builtin.env', 'SH_PROX_PROX_IPADDRESS') }}/{{ lookup('ansible.builtin.env', 'SH_PROX_NETMASK_SHORT') }}
+    gateway {{ lookup('ansible.builtin.env', 'SH_PROX_GATEWAY') }}
     dns-nameservers {{ lookup('ansible.builtin.env', 'SH_PROX_DNSONE') }} {{ lookup('ansible.builtin.env', 'SH_PROX_DNSTWO') }}

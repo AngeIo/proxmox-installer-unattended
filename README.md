@@ -19,7 +19,7 @@ So I created this simple Ansible Playbook to easily _convert_ my servers without
 - [x] Add a bridge interface to connect to the physical network
 - [x] Add a NAT interface (172.16.0.0/12)
 - [x] Set a static IP to main network interface
-- [x] Easy to use with a single command: `just`
+- [x] Easy to use with a single command: `./run.sh`
 - [x] Probably more I forgot...
 
 ### Limitations
@@ -36,7 +36,6 @@ So I created this simple Ansible Playbook to easily _convert_ my servers without
 - Python 3 (tested with 3.9.2)
 - pip (tested with 20.3.4)
 - Ansible (tested with 2.14.5)
-- [Just](https://github.com/casey/just) (optional)
 - Git
 
 ### Downloading the project
@@ -72,21 +71,10 @@ vi variables.sh
 
 Running the playbook is very simple:
 
----
-#### With `just` installed
-```shell
-chmod 755 ./run.sh
-just
-```
-
-**OR**
-
-#### Without `just` installed
 ```shell
 chmod 755 ./run.sh
 ./run.sh
 ```
----
 
 The remote user password will be asked, enter it and wait for the playbook to finish.
 

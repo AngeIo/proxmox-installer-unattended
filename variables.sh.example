@@ -25,6 +25,9 @@ export SH_PROX_FQDN=
 # The network interface name on which you want Bifrost to initialize baremetal machines (using DHCP, PXE...), example: enp0s31f6
 export SH_PROX_BIFROST_INTERFACE=
 
+# The main network interface of your server / baremetal machines, example: eno1
+export SH_PROX_PROX_INTERFACE=
+
 # The MAC address of the network interface on which your should PXE boot, example: 78:2b:cb:4d:15:27
 export SH_PROX_MACADDRESS=
 
@@ -56,7 +59,7 @@ export SH_PROX_PROX_DHCPSTART=
 export SH_PROX_PROX_DHCPEND=
 
 # The IP address you want to give to your server on the new OS, example: 10.5.0.10
-export SH_PROX_PROXIPADDRESS=
+export SH_PROX_PROX_IPADDRESS=
 
 # The associated network mask (long form) of this IP to give to the new OS, example: 255.255.0.0
 export SH_PROX_NETMASK_LONG=
@@ -84,3 +87,6 @@ export SH_PROX_SSHKEY_PATH=$SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME
 
 # Where is located your SSH public key, example: $SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME.pub
 export SH_PROX_SSHKEYPUB_PATH=$SH_PROX_SSH_PATH/$SH_PROX_SSHKEY_NAME.pub
+
+# [ANSIBLE MANAGED / AUTOMATICALLY FILLS IN / DO NOT MODIFY] The MD5 sum of the image to install on your server, example : 09adfa2a0ecda3570cd8d59207927913
+export SH_PROX_MD5_IMAGE=

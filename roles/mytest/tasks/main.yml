@@ -1,7 +1,0 @@
----
-# My test
-
-- name: Install bottle into the specified (virtualenv), inheriting none of the globally installed modules
-  ansible.builtin.pip:
-    name: openstacksdk==0.62.0
-    virtualenv: /opt/stack/bifrost

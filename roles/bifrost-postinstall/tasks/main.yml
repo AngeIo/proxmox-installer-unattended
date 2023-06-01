@@ -1,43 +1,38 @@
 ---
 # This role installs OpenStack Bifrost (standalone version of Ironic) and create the required files to proceed with the deployment of Proxmox
 
-# - name: Install package to fix another error
-#   ansible.builtin.pip:
-#     name: openstacksdk==0.62.0
-#     virtualenv: /opt/stack/bifrost
-
 - name: Download Ubuntu (20.04.6) Ironic Python Agent (IPA) image using ironic-python-agent-builder
   shell:
     cmd: |
       . /opt/stack/bifrost/bin/activate
-      /opt/stack/bifrost/bin/ironic-python-agent-builder -r focal -o /tmp/ipa ubuntu
+      /opt/stack/bifrost/bin/ironic-python-agent-builder -r focal -o ipa ubuntu
   args:
-    creates: /tmp/ipa
-
-# - name: Create a folder to store old IPA images
-#   file:
-#     path: "/var/lib/ironic/httpboot/old_ipa"
-#     state: directory
+    creates: /tmp/ipa.d
+    chdir: /tmp/
 
 - name: Move default IPA image in a separate directory
   shell:
     cmd: |
       rm -rf /var/lib/ironic/httpboot/ipa*
 
-- name: Move new IPA image to Bifrost directory
+- name: Copy new IPA image to Bifrost directory
   shell:
     cmd: |
-      mv /tmp/ipa* /var/lib/ironic/httpboot/
+      cp -r /tmp/ipa* /var/lib/ironic/httpboot/
 
 - name: Create SHA256 checksum of IPA initramfs
   shell:
     cmd: |
-      sha256sum /var/lib/ironic/httpboot/ipa.initramfs > /var/lib/ironic/httpboot/ipa.initramfs.sha256
+      sha256sum ipa.initramfs > ipa.initramfs.sha256
+  args:
+    chdir: /var/lib/ironic/httpboot/
 
 - name: Create SHA256 checksum of IPA kernel
   shell:
     cmd: |
-      sha256sum /var/lib/ironic/httpboot/ipa.kernel > /var/lib/ironic/httpboot/ipa.kernel.sha256
+      sha256sum ipa.kernel > ipa.kernel.sha256
+  args:
+    chdir: /var/lib/ironic/httpboot/
 
 - name: Download Debian 11 Bullseye Cloud image
   get_url:
@@ -67,10 +62,24 @@
   args:
     chdir: /var/lib/ironic/httpboot/
 
-- name: Create MD5 checksum of Debian Cloud image
+- name: Get MD5 checksum of Debian Cloud image
   shell:
     cmd: |
-      md5sum /var/lib/ironic/httpboot/debian-11-generic-amd64_mod.qcow2 > /var/lib/ironic/httpboot/debian-11-generic-amd64_mod.qcow2.md5
+      md5sum debian-11-generic-amd64_mod.qcow2 | cut -d' ' -f1
+  register: my_image_md5
+  args:
+    chdir: /var/lib/ironic/httpboot/
+
+# - name: Copy md5 sum to a readable directory to be used later
+#   shell:
+#     cmd: |
+#       cp /var/lib/ironic/httpboot/debian-11-generic-amd64_mod.qcow2.md5 /tmp/debian-11-generic-amd64_mod.qcow2.md5
+
+- name: Put MD5 in variables.sh
+  lineinfile:
+    path: "{{ lookup('ansible.builtin.env', 'SH_PROX_PROXMOXINSTALL_PATH') }}/variables.sh"
+    regexp: '^export SH_PROX_MD5_IMAGE='
+    line: export SH_PROX_MD5_IMAGE={{ my_image_md5.stdout }}
 
 - name: Restart ironic service
   systemd:
@@ -82,7 +91,7 @@
     name: ironic-inspector.service
     state: restarted
 
-- name: Create baremetal.json file from template
-  template:
-    src: baremetal_json.j2
-    dest: "{{ lookup('ansible.builtin.env', 'BIFROST_INVENTORY_SOURCE') }}"
+# - name: Create baremetal.json file from template
+#   template:
+#     src: baremetal_json.j2
+#     dest: "{{ lookup('ansible.builtin.env', 'BIFROST_INVENTORY_SOURCE') }}"

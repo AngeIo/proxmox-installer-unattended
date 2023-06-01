@@ -4,10 +4,6 @@
 
 ### INIT & CHECK ###
 
-# If any instruction returns non-zero exit code, exit the script
-#set -e
-#set -x
-
 # Define a function to execute when the SIGINT signal is received
 function cleanup {
     echo ""
@@ -86,6 +82,7 @@ myChoice() {
     echo $choicenumber
 }
 
+# Function lineinfile: Replaces a line in a file in a idempotent way
 function lineinfile() { line=${2//\//\\/} ; sed -i -e '/'"${1//\//\\/}"'/{s/.*/'"${line}"'/;:a;n;ba;q};$a'"${line}" "$3" ; }
 
 ### RUNNING ###
@@ -151,11 +148,14 @@ case $choice in
     ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_BIFROST_PATH/playbooks/install.yaml
     # Bifrost post-install playbook POST-INSTALL PLAYBOOK
     ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target --extra-vars "ansible_become_pass=$unattended_ez" $SH_PROX_PROXMOXINSTALL_PATH/pb_bifrost_postinstall.yml
+    cd "${0%/*}" && source variables.sh && cd -
+    ansible-playbook -i $SH_PROX_BIFROST_PATH/playbooks/inventory/target $SH_PROX_PROXMOXINSTALL_PATH/pb_bifrost_baremetal_json.yml
     # Check if the command executed successfully
     if [ $? -eq 0 ]; then
         echo "The server is now ready to work with baremetal machines using OpenStack Bifrost!"
     else
         echo "There was an error while installing Bifrost"
+        exit 1
     fi
     ;;&
 
@@ -178,6 +178,7 @@ case $choice in
         echo "The server is now ready for deployments! (IPA loaded to ramdisk). If you need Proxmox, relaunch the script and type 3 to install Debian, and when it's finished, relaunch again and type 4 to do the installation of Proxmox on your Debian"
     else
         echo "There was an error while enrolling the node"
+        exit 1
     fi
     ;;&
 
@@ -193,7 +194,7 @@ case $choice in
     # Wait for the server to ping before continue
     count_one=0
     echo "Waiting for server to be up again (~10 min timeout)..."
-    while [ "$count_one" -ne 900 ] && ! timeout 1 ping -c 1 -n $SH_PROX_PROXIPADDRESS &> /dev/null
+    while [ "$count_one" -ne 900 ] && ! timeout 1 ping -c 1 -n $SH_PROX_PROX_IPADDRESS &> /dev/null
     do
         printf "%c" "."
         count_one=$((count_one+1))
@@ -205,7 +206,7 @@ case $choice in
     printf "\n%s\n" "The server is back online"
     count_two=0
     echo "Waiting for SSH to be up and ready (~5 min timeout)..."
-    while [ "$count_two" -ne 400 ] && ! timeout 1 nc -z -w 1 $SH_PROX_PROXIPADDRESS 22 &> /dev/null
+    while [ "$count_two" -ne 400 ] && ! timeout 1 nc -z -w 1 $SH_PROX_PROX_IPADDRESS 22 &> /dev/null
     do
         printf "%c" "."
         count_two=$((count_two+1))
@@ -217,14 +218,15 @@ case $choice in
     fi
     printf "\n%s\n" "SSH is working"
     # Delete extra key in 'known_hosts' just in case
-    ssh-keygen -f "$SH_PROX_SSH_PATH/known_hosts" -R "$SH_PROX_PROXIPADDRESS"
+    ssh-keygen -f "$SH_PROX_SSH_PATH/known_hosts" -R "$SH_PROX_PROX_IPADDRESS"
     # Add the Proxmox host IP key to our "known_hosts" file so "Are you sure you want to continue connecting (yes/no)?" is no longer asked
-    ssh-keyscan $SH_PROX_PROXIPADDRESS >> $SH_PROX_SSH_PATH/known_hosts
+    ssh-keyscan $SH_PROX_PROX_IPADDRESS >> $SH_PROX_SSH_PATH/known_hosts
     # Check if the command executed successfully
     if [ $? -eq 0 ]; then
         echo "The server is now up and running with Debian installed! If you need Proxmox, relaunch the script and type 4 to do the installation on your Debian"
     else
         echo "There was an error while deploying the node"
+        exit 1
     fi
     ;;&
 
@@ -240,6 +242,7 @@ case $choice in
         echo "The server is now up and running with Proxmox installed!"
     else
         echo "There was an error while installing Proxmox"
+        exit 1
     fi
     ;;
 esac

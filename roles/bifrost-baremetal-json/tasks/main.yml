@@ -1,0 +1,7 @@
+---
+# This role generates the baremetal.json file required by OpenStack Bifrost (standalone version of Ironic)
+
+- name: Create baremetal.json file from template
+  template:
+    src: baremetal_json.j2
+    dest: "{{ lookup('ansible.builtin.env', 'BIFROST_INVENTORY_SOURCE') }}"

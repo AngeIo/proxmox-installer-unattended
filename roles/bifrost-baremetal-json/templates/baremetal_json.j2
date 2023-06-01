@@ -8,7 +8,7 @@
       "ipmi_username": "{{ lookup('ansible.builtin.env', 'SH_PROX_IPMIUSER') }}",
       "ipmi_password": "{{ lookup('ansible.builtin.env', 'SH_PROX_IPMIPASS') }}"
     },
-    "ipv4_address": "{{ lookup('ansible.builtin.env', 'SH_PROX_PROXIPADDRESS') }}",
+    "ipv4_address": "{{ lookup('ansible.builtin.env', 'SH_PROX_PROX_IPADDRESS') }}",
     "ipv4_subnet_mask": "{{ lookup('ansible.builtin.env', 'SH_PROX_NETMASK_LONG') }}",
     "ipv4_gateway": "{{ lookup('ansible.builtin.env', 'SH_PROX_GATEWAY') }}",
     "ipv4_nameserver": ["{{ lookup('ansible.builtin.env', 'SH_PROX_DNSONE') }}", "{{ lookup('ansible.builtin.env', 'SH_PROX_DNSTWO') }}"],
@@ -22,7 +22,7 @@
     },
     "instance_info": {
       "image_source": "http://{{ lookup('ansible.builtin.env', 'SH_PROX_BIFROSTRUNNERIPADDRESS') }}:8080/debian-11-generic-amd64_mod.qcow2",
-      "image_checksum": "aa70286e5fcb614bb85ff7dcd8ef36e6",
+      "image_checksum": "{{ lookup('ansible.builtin.env', 'SH_PROX_MD5_IMAGE') }}",
       "configdrive": {
         "meta_data": {
           "public_keys": {"0": "{{ lookup('ansible.builtin.env', 'SH_PROX_SSHKEY_CONTENT') }}"},
@@ -43,7 +43,7 @@
                 "id": "private-ipv4",
                 "type": "ipv4",
                 "link": "eno1",
-                "ip_address": "{{ lookup('ansible.builtin.env', 'SH_PROX_PROXIPADDRESS') }}",
+                "ip_address": "{{ lookup('ansible.builtin.env', 'SH_PROX_PROX_IPADDRESS') }}",
                 "netmask": "{{ lookup('ansible.builtin.env', 'SH_PROX_NETMASK_LONG') }}",
                 "dns_nameservers": [
                     "{{ lookup('ansible.builtin.env', 'SH_PROX_DNSONE') }}",
