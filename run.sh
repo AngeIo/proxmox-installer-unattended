@@ -14,12 +14,7 @@ function cleanup {
 trap cleanup SIGINT
 # Go to script's directory and load the variables from this file
 cd "${0%/*}" && source variables.sh && cd -
-# Check that projects paths are set correctly
-if [ ! -d $SH_PROX_BIFROST_PATH ]; then
-    echo "bifrost directory not found, wrong path set? Current path set $SH_PROX_BIFROST_PATH"
-    exit 1
-fi
-echo "bifrost directory found! At $SH_PROX_BIFROST_PATH"
+# Check that the project path is set correctly
 if [ ! -d $SH_PROX_PROXMOXINSTALL_PATH ]; then
     echo "proxmox-installer-unattended directory not found, wrong path set? Current path set $SH_PROX_PROXMOXINSTALL_PATH"
     exit 1
