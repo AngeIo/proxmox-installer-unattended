@@ -80,7 +80,7 @@
   lineinfile:
     path: "{{ lookup('ansible.builtin.env', 'SH_PROX_PROXMOXINSTALL_PATH') }}/variables.sh"
     regexp: '^export SH_PROX_SSHKEY_CONTENT='
-    line: export SH_PROX_SSHKEY_CONTENT={{ my_sshkey.stdout }}
+    line: export SH_PROX_SSHKEY_CONTENT="{{ my_sshkey.stdout }}"
 
 - name: Put MD5 in variables.sh
   lineinfile:
