@@ -7,6 +7,12 @@ Based on the official documentations at :
 - https://docs.openstack.org/bifrost/2023.1/
 - https://pve.proxmox.com/wiki/Install_Proxmox_VE_on_Debian_11_Bullseye
 
+## Video demonstration
+
+Here is a video showing what this project does (click on the image) :
+
+[![Video showing what this project does](https://img.youtube.com/vi/4uudEyzGmws/0.jpg)](https://www.youtube.com/watch?v=4uudEyzGmws)
+
 ## Why?
 
 I wanted to install Proxmox on multiple servers at once in an unattended way.
