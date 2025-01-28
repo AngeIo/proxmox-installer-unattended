@@ -34,10 +34,10 @@
   args:
     chdir: /var/lib/ironic/httpboot/
 
-- name: Download Debian 11 Bullseye Cloud image
+- name: Download Debian 12 Bookworm Cloud image
   get_url:
-    url: http://cdimage.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.qcow2
-    dest: /var/lib/ironic/httpboot/debian-11-generic-amd64.qcow2
+    url: https://cdimage.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
+    dest: /var/lib/ironic/httpboot/debian-12-generic-amd64.qcow2
 
 - name: Change owner and permissions of IPA files
   shell:
@@ -48,7 +48,7 @@
 - name: Rename cloud image for modified version
   shell:
     cmd: |
-      mv /var/lib/ironic/httpboot/debian-11-generic-amd64.qcow2 /var/lib/ironic/httpboot/debian-11-generic-amd64_mod.qcow2
+      mv /var/lib/ironic/httpboot/debian-12-generic-amd64.qcow2 /var/lib/ironic/httpboot/debian-12-generic-amd64_mod.qcow2
 
 - name: Install virt-customize
   apt:
@@ -58,7 +58,7 @@
 
 - name: Customize the Debian Cloud image using virt-customize to install firmware for network card
   command: |
-    virt-customize -v -a debian-11-generic-amd64_mod.qcow2 --run-command "sudo apt update && sudo apt upgrade -y && sudo apt install software-properties-common -y && sudo apt-add-repository non-free && sudo apt-get update && sudo apt install firmware-bnx2 -y"
+    virt-customize -v -a debian-12-generic-amd64_mod.qcow2 --run-command "sudo apt update && sudo apt upgrade -y && sudo apt install software-properties-common -y && sudo apt-add-repository non-free && sudo apt-get update && sudo apt install firmware-bnx2 -y"
   args:
     chdir: /var/lib/ironic/httpboot/
 
@@ -71,7 +71,7 @@
 - name: Get MD5 checksum of Debian Cloud image
   shell:
     cmd: |
-      md5sum debian-11-generic-amd64_mod.qcow2 | cut -d' ' -f1
+      md5sum debian-12-generic-amd64_mod.qcow2 | cut -d' ' -f1
   register: my_image_md5
   args:
     chdir: /var/lib/ironic/httpboot/
