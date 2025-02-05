@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script will run all the commands to enroll a physical machine (baremetal), deploy an OS on it (Debian 11), and install Proxmox VE
+# This script will run all the commands to enroll a physical machine (baremetal), deploy an OS on it (Debian 12), and install Proxmox VE
 # The script should also be run by the same user who installed Bifrost
 
 ### INIT & CHECK ###

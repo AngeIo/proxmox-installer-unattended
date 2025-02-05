@@ -1,8 +1,8 @@
 ---
-# This playbook initialize a Debian 11 installation and transforms it into a Proxmox VE server (version 7.4)
-# Based on the official documentation at https://pve.proxmox.com/wiki/Install_Proxmox_VE_on_Debian_11_Bullseye
+# This playbook initialize a Debian 12 installation and transforms it into a Proxmox VE server (version 8.3)
+# Based on the official documentation at https://pve.proxmox.com/wiki/Install_Proxmox_VE_on_Debian_12_Bookworm
 
-- name: Install Proxmox VE 7 on Debian 11
+- name: Install Proxmox VE 8 on Debian 12
   become: yes
   hosts: baremetal
   roles:
